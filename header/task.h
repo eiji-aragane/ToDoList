@@ -5,12 +5,6 @@
 
 enum TaskStatus { Incomplete, Complete };
 
-// struct task {
-//     int id;
-//     std::string taskName;
-//     TaskStatus taskStatus;
-// };
-
 enum TaskResult { SUCCESS, FAIL };
 
 class Task {
@@ -21,6 +15,9 @@ class Task {
     TaskResult doneTask();
     void showTask() const;
     int getId() const;
+    std::string getName() const;
+    TaskStatus getTaskStatus() const;
+    void setStatus(TaskStatus taskStatus);
 
    private:
     int taskId;

@@ -8,6 +8,7 @@
 int main() {
     // taskManager生成
     TaskManager taskManager{};
+    taskManager.readFromFile();
 
     // task生成
     std::cout << "===ToDoアプリへようこそ===" << std::endl;
@@ -61,6 +62,7 @@ int main() {
             std::cout << "タスクを表示します" << std::endl;
             taskManager.showTask();
         } else if (command == "finish") {
+            TaskResult result{taskManager.saveToFile()};
             std::cout << "終了します" << std::endl;
             break;
         } else {
