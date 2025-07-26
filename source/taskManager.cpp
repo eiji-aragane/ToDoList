@@ -1,5 +1,7 @@
 #include "taskManager.h"
 
+#include <direct.h>
+#include <sys/stat.h>
 #include <windows.h>
 
 #include <algorithm>
@@ -59,6 +61,12 @@ TaskResult TaskManager::saveToFile() const {
     std::time_t time_now = std::chrono::system_clock::to_time_t(nowTime);
     std::tm local_tm;
 
+    // フォルダが無ければ作成する
+    struct stat info;
+    if (stat(FOLDER.c_str(), &info) != 0) {
+        _mkdir(FOLDER.c_str());
+    }
+
 #if defined(_WIN32)
     // MinGW では localtime_r がないことがある
     std::tm* tmp = std::localtime(&time_now);
@@ -102,6 +110,8 @@ TaskResult TaskManager::readFromFile() {
 
         taskList.clear();
 
+        int maxId{0};
+
         for (const auto& item : j) {
             int id = item["id"];
             std::string name = item["name"];
@@ -114,7 +124,13 @@ TaskResult TaskManager::readFromFile() {
             auto task = std::make_shared<Task>(id, name);
             task->setStatus(status);  // setStatus を用意しておく
             taskList.push_back(task);
+
+            if (id > maxId) {
+                maxId = id;
+            }
         }
+        nextId = maxId + 1;
+        in.close();
         deleteAllBackUp();
 
     } else {
